@@ -1,0 +1,6 @@
+{
+  "enabledMcpjsonServers": [
+    "mcp-sap-gui"
+  ],
+  "enableAllProjectMcpServers": true
+}

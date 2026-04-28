@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "mcp-sap-gui": {
+      "command": "python",
+      "args": [
+        "-m",
+        "sap_gui_server.server"
+      ],
+      "cwd": "C:/vscode/integra_sap/mcp-sap-gui-main"
+    }
+  }
+}
