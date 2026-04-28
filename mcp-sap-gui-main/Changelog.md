@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.4 (2026-04-28)
+
+### Changed
+- Claude Code integration test commit
+
 ## 0.1.3 (2025-02-21)
 
 ### Added
