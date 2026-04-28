@@ -203,10 +203,12 @@ class TestSapGuiServer:
     @pytest.mark.asyncio
     async def test_error_handling(self, server: SapGuiServer):
         """Test error handling with invalid inputs."""
-        # Test invalid transaction code
-        with pytest.raises(Exception):
-            await server.handle_call_tool("launch_transaction", {"transaction": "INVALID"})
-        
+        # Test invalid transaction code — server returns errors as TextContent (MCP pattern)
+        result = await server.handle_call_tool("launch_transaction", {"transaction": "INVALID"})
+        assert len(result) > 0
+        assert any(isinstance(c, types.TextContent) and "error" in c.text.lower() for c in result)
+
         # Test invalid coordinates
-        with pytest.raises(Exception):
-            await server.handle_call_tool("sap_click", {"x": -1, "y": -1})
+        result = await server.handle_call_tool("sap_click", {"x": -1, "y": -1})
+        assert len(result) > 0
+        assert any(isinstance(c, types.TextContent) and "error" in c.text.lower() for c in result)

@@ -100,7 +100,7 @@ class SapGuiServer:
                 image = Image.open(BytesIO(image_data))
                 image.save(full_path)
                 
-                return [types.TextContent(type="text", text=f"Screenshot saved as {full_path}")]
+                return [types.TextContent(type="text", text=f"Screenshot saved to {full_path}")]
             elif return_screenshot == "as_base64":
                 return [types.TextContent(type="text", text=result["image"])]
             elif return_screenshot == "as_imagecontent":
@@ -378,7 +378,7 @@ class SapGuiServer:
                                 image_data = base64.b64decode(self.last_screenshot)
                                 image = Image.open(BytesIO(image_data))
                                 image.save(full_path)
-                                logger.info(f"Screenshot saved as {full_path}")
+                                logger.info(f"Screenshot saved to {full_path}")
                                 content.append(types.TextContent(type="text", text=f"Screenshot saved as {full_path}"))
                             except Exception as e:
                                 logger.error(f"Error saving screenshot: {str(e)}")

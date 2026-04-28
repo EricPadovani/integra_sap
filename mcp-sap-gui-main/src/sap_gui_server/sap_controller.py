@@ -446,16 +446,28 @@ class SapController:
 
     def _get_sapgui_path(self) -> str:
         """Get SAP GUI installation path from registry or default location"""
-        try:
-            with winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, r"SOFTWARE\WOW6432Node\SAP\SAPGUIFrontend") as key:
-                install_path = winreg.QueryValueEx(key, "InstallationPath")[0]
-                logger.debug(f"Found SAP GUI path in registry: {install_path}")
-                return install_path
-        except WindowsError as e:
-            logger.warning(f"Could not read SAP GUI path from registry: {str(e)}")
-            default_path = r"C:\Program Files\SAP\FrontEnd\SAPGUI"
-            logger.debug(f"Using default SAP GUI path: {default_path}")
-            return default_path
+        registry_candidates = [
+            (r"SOFTWARE\WOW6432Node\SAP\SAP Shared", "SAPsysdir"),
+            (r"SOFTWARE\WOW6432Node\SAP\SAPGUIFrontend", "InstallationPath"),
+            (r"SOFTWARE\SAP\SAPGUIFrontend", "InstallationPath"),
+        ]
+        for key_path, value_name in registry_candidates:
+            try:
+                with winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, key_path) as key:
+                    install_path = winreg.QueryValueEx(key, value_name)[0]
+                    logger.debug(f"Found SAP GUI path in registry: {install_path}")
+                    return install_path
+            except WindowsError:
+                continue
+        logger.warning("Could not read SAP GUI path from registry, using fallback paths")
+        for default_path in [
+            r"C:\Program Files (x86)\SAP\FrontEnd\SapGui",
+            r"C:\Program Files\SAP\FrontEnd\SAPGUI",
+        ]:
+            if os.path.isdir(default_path):
+                logger.debug(f"Using default SAP GUI path: {default_path}")
+                return default_path
+        return r"C:\Program Files\SAP\FrontEnd\SAPGUI"
 
     def launch_transaction(self, transaction: str) -> Dict[str, Any]:
         """Launch a SAP transaction"""
